@@ -1,0 +1,25 @@
+.jumbotron { 
+  background-color: #660033; 
+  color: #ffffff;
+}
+.allNames {
+  width: 75px;
+  height: 20px;
+}
+.groupSize {
+  width: 75px;
+  height: 20px;
+}
+
+.clearfix{
+  margin: 3px 3px 3px 3px;
+  padding: 3px 3px 3px 3px;
+}
+canvas{
+  border: 1px dotted black;
+  padding-left: 0;
+  padding-right: 0;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+}
