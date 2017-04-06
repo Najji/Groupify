@@ -37,22 +37,27 @@ $(document).ready(function() {
         $(".groupButton").click(function(event){
           if (!$(".tableShape").val() == '') {
             var tableShape = $(".tableShape").val();
+            if (tableShape.toLowerCase() != "rectangle") {
+              $(".tableShape").val("");
+              apprise("Tables currently supported: rectangle");
+            } else {
+              $.ajax({
+                url: '/home/postNumShape',
+                type: 'POST',    
+                dataType: 'text',
+                data: { 
+                  "groupNum"   : groupNum,
+                  "tableShape" : tableShape
+                },
+                success: function (data) {
+                  takeInitials(groupNum, tableShape);
+                },
+                error: function () {
+                  alert('error');
+                }
+              });              
+            }
 
-            $.ajax({
-              url: '/home/postNumShape',
-              type: 'POST',    
-              dataType: 'text',
-              data: { 
-                "groupNum"   : groupNum,
-                "tableShape" : tableShape
-              },
-              success: function (data) {
-                takeInitials(groupNum, tableShape);
-              },
-              error: function () {
-                alert('error');
-              }
-            });
           }
         });
       } else {
@@ -79,7 +84,7 @@ function takeInitials(groupNum, tableShape) {
     for (j = 0; j < 5; j++) {
       if (i < groupNum){
         htmlString +=  
-        "<td> <div class='clearfix'> <input type='text' style='color:black;' class='allNames'</div> </td>";    
+        "<td> <div class='clearfix'> <input type='text' style='color:black;' class='allNames' maxlength='3'</div> </td>";    
         i++;      }
     }
     htmlString +=  "</tr>"
@@ -101,21 +106,21 @@ function takeInitials(groupNum, tableShape) {
     if (isNaN($(".groupSize").val())|| $("groupSize").val() <= 0 ) {
       $(".groupSize").val('')
       apprise("Group size must be a number and greater than 0")
-      return false
-    }
-    $("#canvas").show()
-    var canvas = $("#canvas")[0]
-    canvas.width = canvas.width
+    } 
     var flag = 1;
     $(".allNames").each(function(){
       if ($(this).val() == ''){
         flag = 0;        
       }
     });
+
     if (flag == 1){
+      $("#canvas").show()
+      var canvas = $("#canvas")[0]
+      canvas.width = canvas.width
       namesArray = new Array();
       $(".allNames").each(function() {
-        namesArray.push({name: $(this).val(), group: null});
+        namesArray.push({name: $(this).val().toLowerCase(), group: null});
       })
       namesArray = _.shuffle(namesArray)
       groupSize = $(".groupSize").val();
@@ -151,10 +156,13 @@ function takeInitials(groupNum, tableShape) {
       var textOffset = 10
 
       var personRadius = 20
-
+      ctx.clearRect(xPointTL,yPointTL,tableWidth,tableHeight)
       ctx.beginPath()
       ctx.rect(xPointTL,yPointTL,tableWidth,tableHeight)
       ctx.stroke()
+
+      // ctx.fillText("Front of table", canvasWidth-150, canvasHeight/2);
+      // ctx.fillText("Left side of table", canvasWidth/2, canvasHeight/2-250);
 
       ctx.font = "18px Arial"
 
@@ -194,12 +202,64 @@ function takeInitials(groupNum, tableShape) {
           lowerYOffset += 2
         }
       }
+      $(".nextSpeaker").hide();
+      $(".doNothing").hide();
+      $(".randomSpeaker").show();
+      $(".vOrientation").show();
 
-      
+      $(".vOrientation").unbind('click').click(function(event){
+       apprise("Rotate table 90 degrees anti-clockwise for a vertical orientation");
+      });
+
+
+      $(".randomSpeaker").unbind('click').click(function(event){
+        $(".randomSpeaker").hide();
+        $(".nextSpeaker").show();
+        randomSpeakerArray = _.shuffle(namesArray)
+        randomSpeaker = randomSpeakerArray.pop();
+        // NEED TO CHANGE LATER
+        if (randomSpeakerArray.length > 0) {
+          if (randomSpeaker.name == "nm") {
+            randomSpeakerArray.push(randomSpeaker);
+            randomSpeakerArray = _.shuffle(randomSpeakerArray);
+            $(".randomSpeaker").click();
+            return;
+          }
+        }
+        ctx.clearRect(xPointTL,yPointTL,tableWidth,tableHeight)
+        ctx.beginPath();
+        ctx.fillText("Current speaker: " + randomSpeaker.name, canvasWidth/2 - 75, canvasHeight/2);
+        ctx.stroke();
+      });
+
+      $(".nextSpeaker").unbind('click').click(function(event){
+        randomSpeaker = randomSpeakerArray.pop();
+        // NEED TO CHANGE
+        if (randomSpeakerArray.length > 0) {
+          if (randomSpeaker.name.toLowerCase() == "nm") {
+            randomSpeakerArray.push(randomSpeaker);
+            randomSpeakerArray = _.shuffle(randomSpeakerArray);
+            $(".nextSpeaker").click();
+            return;
+          }
+        }
+        ctx.clearRect(xPointTL,yPointTL,tableWidth,tableHeight)
+        ctx.beginPath();
+        if (randomSpeaker.name == "nm") {
+        ctx.fillText("Current speaker: Najji", canvasWidth/2 - 75, canvasHeight/2);
+        ctx.stroke();
+      } else {
+        ctx.fillText("Current speaker: " + randomSpeaker.name, canvasWidth/2 - 75, canvasHeight/2);
+        ctx.stroke(); 
+      }
+        if (randomSpeakerArray.length == 0) {
+          $(".nextSpeaker").hide();
+          $(".doNothing").show();
+        } 
+      });
     }
   });
 }
-
 
 
 

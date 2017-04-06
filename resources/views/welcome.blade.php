@@ -21,6 +21,12 @@
   <canvas id="canvas" width="1000" height="570" style="display:none;">
     Time to upgrade your browser
   </canvas>
+  <div class="wrapper">
+    <button type="button" class="btn btn-danger randomSpeaker" style="display:none;">Random Speaker</button>
+    <button type="button" class="btn btn-danger nextSpeaker" style="display:none;">Next Speaker</button>
+    <button type="button" class="btn btn-danger doNothing" style="display:none;">All Done</button>
+    <button type="button" class="btn btn-danger vOrientation" style="display:none;">Vertical Orientation</button>
+  </div>
    </body>
 </html>
 
