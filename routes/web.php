@@ -16,5 +16,6 @@
 // });
 
 Route::get('/','HomeController@getHome');
+Route::get('/home/getUsers','HomeController@getUsers');
 Route::post('/home/postNumShape','HomeController@postNumShape');
 

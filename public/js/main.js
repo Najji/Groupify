@@ -24,6 +24,61 @@ $(document).ready(function() {
     }
   });
 
+  $(".getUsers").unbind('click').click(function(event){
+    var htmlString = '';
+    $.ajax({
+      url: '/home/getUsers',
+      type: 'get',    
+      dataType: 'text',
+      success: function (data) {
+        data = data.substring(1).slice(0,-1);
+        data = data.replace(/"/g, "");
+        htmlData = data.replace(/\s/g, "_");
+        var htmlDataArray = htmlData.split(",");
+        var usersArray = data.split(",");
+        var alignString = '<label style="text-align: center; width: 140px;">'
+        for (i = 0, j = 1; i < usersArray.length; i++, j++) {
+            
+          htmlString += '<input type="checkbox" id=' + htmlDataArray[i] + ' value=' + htmlDataArray[i] + '> ' + alignString + usersArray[i] + '</label>'
+          if (j % 3 == 0) {
+            htmlString+= '<br>';
+          }
+        }
+        document.getElementById("usersBody").innerHTML = htmlString
+
+        $('input[type="checkbox"]').off('change').on('change', function(event) {
+          var user = $(event.currentTarget).val()
+          userInitials = user.charAt(0).toLowerCase();
+          nameArray = user.split("_");
+          userInitials += nameArray[1].charAt(0).toString().toLowerCase();
+
+          if (this.checked) {
+            $(".allNames").each(function(index) {
+              if($(this).val() == "") {
+                userInitials = user.charAt(0).toLowerCase();
+                nameArray = user.split("_");
+                userInitials += nameArray[1].charAt(0).toString().toLowerCase();
+                $(this).val(userInitials)
+                return false
+              }
+            })
+          } else {
+            $(".allNames").each(function(index) {
+              if ($(this).val() == userInitials) {
+                $(this).val('');
+                return false
+              }
+            });
+          }
+        })
+      },
+      error: function () {
+        alert('error');
+      }
+    });  
+  });
+
+
 
   $(".continueButton").click(function(event){
     if (!$(".groupNum").val() == '') {
@@ -66,10 +121,6 @@ $(document).ready(function() {
       }
     }
   });
-
-
-
-
 })
 
 function takeInitials(groupNum, tableShape) {
@@ -77,6 +128,8 @@ function takeInitials(groupNum, tableShape) {
   $(".form-inline").hide();
   var groupNum = groupNum
   $(".enterNamesText").show();
+  $(".getUsers").show();
+  $(".getUsers").show();
   var htmlString = '';
   htmlString +=  "<table align='center'>"
   for (i = 0; i < groupNum; i){

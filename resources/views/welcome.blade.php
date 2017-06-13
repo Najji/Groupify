@@ -26,6 +26,10 @@
     <button type="button" class="btn btn-danger nextSpeaker" style="display:none;">Next Speaker</button>
     <button type="button" class="btn btn-danger doNothing" style="display:none;">All Done</button>
     <button type="button" class="btn btn-danger vOrientation" style="display:none;">Vertical Orientation</button>
+    <button type="button" class="btn btn-danger getUsers" style="display:none;">Get Users</button>
+  </div>
+  <br>
+  <div id="usersBody" align="center">
   </div>
    </body>
 </html>
